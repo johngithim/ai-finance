@@ -3,6 +3,7 @@ import { Mona_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
 const monaSans = Mona_Sans({
   variable: "--font-mona-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({
           {/*header*/}
           <Header />
           <main className={"min-h-screen"}>{children}</main>
+          <Toaster richColors />
           {/*footer*/}
           <footer className={"bg-blue-50 py-12"}>
             <div className={"container mx-auto px-4 text-center text-gray-500"}>

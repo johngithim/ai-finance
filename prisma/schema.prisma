@@ -46,6 +46,11 @@ model Account {
   @@map("accounts")
 }
 
+enum AccountType {
+  CURRENT
+  SAVINGS
+}
+
 model Transaction {
   id                String            @id @default(uuid())
   type             TransactionType
@@ -90,10 +95,7 @@ enum TransactionType {
   EXPENSE
 }
 
-enum AccountType {
-  CURRENT
-  SAVINGS
-}
+
 
 enum TransactionStatus {
   PENDING
