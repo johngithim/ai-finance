@@ -13,7 +13,7 @@ import {
 import { Switch } from "./ui/switch";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { updateDefaultAccount } from "../actions/Accouonts";
+import { updateDefaultAccount } from "../actions/Accounts";
 import { toast } from "sonner";
 import useFetch from "../hooks/UseFetch";
 
