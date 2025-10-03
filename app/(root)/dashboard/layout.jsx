@@ -1,13 +1,20 @@
 import DashboardPage from "./page";
 import { Suspense } from "react";
-import { BarLoader } from "react-spinners";
+import { Helix } from "ldrs/react";
+import "ldrs/react/Helix.css";
+import { Quantum } from "ldrs/react";
+import "ldrs/react/Quantum.css";
 
 const DashboardLayout = () => {
   return (
     <div className={"px-5"}>
       <Suspense
         fallback={
-          <BarLoader className={"mt-4"} width={"100%"} color={"#9333ea"} />
+          <div
+            className={"fixed inset-0 z-50 flex items-center justify-center"}
+          >
+            <Quantum size="45" speed="1.75" color="#9333ea" />
+          </div>
         }
       >
         <DashboardPage />
