@@ -13,7 +13,7 @@ const DashboardLayout = () => {
           <div
             className={"fixed inset-0 z-50 flex items-center justify-center"}
           >
-            <Quantum size="45" speed="1.75" color="#9333ea" />
+            <Quantum size="45" speed="1.75" color="black" />
           </div>
         }
       >

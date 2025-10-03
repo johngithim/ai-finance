@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -41,6 +41,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import useFetch from "../hooks/UseFetch";
+import { bulkDeleteTransactions } from "../actions/Accounts";
+import { toast } from "sonner";
+import { BarLoader } from "react-spinners";
 
 const RECURRING_INTERVALS = {
   DAILY: "Daily",
@@ -61,6 +65,12 @@ const TransactionTable = ({ transactions }) => {
   const [typeFilter, setTypeFilter] = useState("");
   const [recurringFilter, setRecurringFilter] = useState("");
 
+  const {
+    loading: deleteLoading,
+    fn: deleteFn,
+    data: deleted,
+  } = useFetch(bulkDeleteTransactions());
+
   const filteredAndSortedTransactions = useMemo(() => {
     let result = [...transactions];
 
@@ -79,6 +89,26 @@ const TransactionTable = ({ transactions }) => {
     if (typeFilter) {
       result = result.filter((transaction) => transaction.type === typeFilter);
     }
+
+    result.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortConfig.field) {
+        case "date":
+          comparison = new Date(a.date) - new Date(b.date);
+          break;
+        case "amount":
+          comparison = a.amount - b.amount;
+          break;
+        case "category":
+          comparison = a.category.localeCompare(b.category);
+          break;
+        default:
+          comparison = 0;
+      }
+
+      return sortConfig.direction === "asc" ? comparison : -comparison;
+    });
 
     return result;
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
@@ -107,7 +137,24 @@ const TransactionTable = ({ transactions }) => {
     );
   };
 
-  const handleBulkDelete = () => {};
+  const handleBulkDelete = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${selectedIds.length} transactions?`,
+      )
+    ) {
+      return;
+    }
+
+    await deleteFn(selectedIds);
+  };
+
+  useEffect(() => {
+    if (deleted && !deleteLoading) {
+      toast.success("transactions deleted successfully");
+    }
+  }, [deleted, deleteLoading]);
+
   const handleClearFilters = () => {
     setSearchTerm("");
     setTypeFilter("");
@@ -117,6 +164,10 @@ const TransactionTable = ({ transactions }) => {
 
   return (
     <div className={"space-y-4"}>
+      {deleted && !deleteLoading && (
+        <BarLoader className={"mt-4"} width={"100%"} color={"#933ea"} />
+      )}
+
       <div className={"flex flex-col sm:flex-row gap-4"}>
         <div className={"relative flex-1"}>
           <Search
@@ -334,7 +385,7 @@ const TransactionTable = ({ transactions }) => {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className={"text-destructive"}
-                          // onClick={() => deleteFn([transaction.id])}
+                          onClick={() => deleteFn([transaction.id])}
                         >
                           Delete
                         </DropdownMenuItem>
