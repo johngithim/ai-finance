@@ -69,7 +69,7 @@ const TransactionTable = ({ transactions }) => {
     loading: deleteLoading,
     fn: deleteFn,
     data: deleted,
-  } = useFetch(bulkDeleteTransactions());
+  } = useFetch(bulkDeleteTransactions);
 
   const filteredAndSortedTransactions = useMemo(() => {
     let result = [...transactions];
@@ -151,9 +151,15 @@ const TransactionTable = ({ transactions }) => {
 
   useEffect(() => {
     if (deleted && !deleteLoading) {
-      toast.success("transactions deleted successfully");
+      if (deleted.success) {
+        toast.success("Transactions deleted successfully");
+        setSelectedIds([]);
+        router.refresh();
+      } else if (deleted.success === false) {
+        toast.error(deleted.error || "Failed to delete transactions");
+      }
     }
-  }, [deleted, deleteLoading]);
+  }, [deleted, deleteLoading, router]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -164,8 +170,8 @@ const TransactionTable = ({ transactions }) => {
 
   return (
     <div className={"space-y-4"}>
-      {deleted && !deleteLoading && (
-        <BarLoader className={"mt-4"} width={"100%"} color={"#933ea"} />
+      {deleteLoading && (
+        <BarLoader className={"mt-4"} width={"100%"} color={"#9333ea"} />
       )}
 
       <div className={"flex flex-col sm:flex-row gap-4"}>

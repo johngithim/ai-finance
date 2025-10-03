@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { Quantum } from "ldrs/react";
 import "ldrs/react/Quantum.css";
 import TransactionTable from "../../../../components/TransactionTable";
+import AccountChart from "../../../../components/AccountChart";
+import { BarLoader } from "react-spinners";
 
 export default async function AccountPage({ params }) {
   const accountData = await getAccountWithTransactions(params.id);
@@ -40,7 +42,7 @@ export default async function AccountPage({ params }) {
 
       {/* Chart Section */}
       <Suspense
-        fallback={<Quantum className="mt-4" width={"100%"} color="black" />}
+        fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
       >
         <AccountChart transactions={transactions} />
       </Suspense>
