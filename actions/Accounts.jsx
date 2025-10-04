@@ -148,3 +148,25 @@ export async function bulkDeleteTransactions(transactionIds) {
     return { success: false, error: error.message };
   }
 }
+
+export async function bulkDeleteAccounts(accountIds) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+    if (!user) throw new Error("User not found");
+
+    // Ensure we only delete accounts belonging to this user
+    await db.account.deleteMany({
+      where: { id: { in: accountIds }, userId: user.id },
+    });
+
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
