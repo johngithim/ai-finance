@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "./ui/input";
 
 const AddTransactionForm = ({ accounts, categories }) => {
   const {
@@ -60,6 +61,49 @@ const AddTransactionForm = ({ accounts, categories }) => {
             <SelectItem value="EXPENSE">Expense</SelectItem>
           </SelectContent>
         </Select>
+
+        {errors.type && (
+          <p className={"text-sm text-red-500"}>{errors.type.message}</p>
+        )}
+      </div>
+
+      <div>
+        <div className={"space-y-2"}>
+          <label className={"text-sm font-medium"}>Amount</label>
+          <Input
+            type={"number"}
+            step={"0.01"}
+            placeholder={"0.00"}
+            {...register("amount")}
+          />
+
+          {errors.type && (
+            <p className={"text-sm text-red-500"}>{errors.type.message}</p>
+          )}
+        </div>
+
+        <div className={"space-y-2"}>
+          <label className={"text-sm font-medium"}>Account</label>
+          <Select
+            onValueChange={(value) => setValue("accountId", value)}
+            defaultValue={getValues("accountId")}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select account" />
+            </SelectTrigger>
+            <SelectContent>
+              {accounts.map((account) => (
+                <SelectItem key={account.id} value={account.id}>
+                  {account.name} (${parseFloat(account.balance).toFixed(2)})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {errors.type && (
+            <p className={"text-sm text-red-500"}>{errors.type.message}</p>
+          )}
+        </div>
       </div>
     </form>
   );
