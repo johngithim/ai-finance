@@ -24,8 +24,12 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Switch } from "./ui/switch";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 const AddTransactionForm = ({ accounts, categories }) => {
+  const router = useRouter();
   const {
     register,
     setValue,
@@ -56,11 +60,28 @@ const AddTransactionForm = ({ accounts, categories }) => {
   const isRecurring = watch("isRecurring");
   const date = watch("date");
 
+  const onSubmit = async (data) => {
+    const formData = {
+      ...data,
+      amount: parseFloat(data.amount),
+    };
+
+    transactionFn(formData);
+  };
+
+  useEffect(() => {
+    if (transactionResult?.success && !transactionLoading) {
+      toast("Transaction created successfully!");
+      reset();
+      router.push(`/account/${transactionResult.data.accountId}`);
+    }
+  }, [transactionResult, transactionLoading]);
+
   const filteredCategories = categories.filter(
     (category) => category.type === type,
   );
   return (
-    <form className={"space-y-6"}>
+    <form className={"space-y-6"} onSubmit={handleSubmit(onSubmit)}>
       {/*AI recipt*/}
       <div className={"space-y-2"}>
         <label className={"text-sm font-medium w-full"}>Type</label>
@@ -206,29 +227,47 @@ const AddTransactionForm = ({ accounts, categories }) => {
 
       {isRecurring && (
         <div className={"space-y-2"}>
-          <label className={"text-sm font-medium"}>Category</label>
+          <label className={"text-sm font-medium"}>Recurring Interval</label>
           <Select
-            onValueChange={(value) => setValue("category", value)}
-            defaultValue={getValues("category")}
+            onValueChange={(value) => setValue("recurringInterval", value)}
+            defaultValue={getValues("recurringInterval")}
           >
             <SelectTrigger className={"w-full"}>
-              <SelectValue placeholder="Select category" />
+              <SelectValue placeholder="Select Interval" />
             </SelectTrigger>
             <SelectContent>
-              {filteredCategories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>{" "}
-            4:48:44
+              <SelectItem value={"DAILY"}>Daily</SelectItem>
+              <SelectItem value={"DAILY"}>Weekly</SelectItem>
+              <SelectItem value={"DAILY"}>Monthly</SelectItem>
+              <SelectItem value={"DAILY"}>Yearly</SelectItem>
+            </SelectContent>
           </Select>
 
-          {errors.category && (
-            <p className={"text-sm text-red-500"}>{errors.category.message}</p>
+          {errors.recurringInterval && (
+            <p className={"text-sm text-red-500"}>
+              {errors.recurringInterval.message}
+            </p>
           )}
         </div>
       )}
+
+      <div className={"flex gap-4"}>
+        <Button
+          type={"button"}
+          variant={"outline"}
+          // className={"w-full"}
+          onClick={() => router.back()}
+        >
+          Cancel
+        </Button>
+        <Button
+          type={"submit"}
+          // className={"w-full"}
+          disabled={transactionLoading}
+        >
+          Create transaction
+        </Button>
+      </div>
     </form>
   );
 };
