@@ -21,6 +21,29 @@ export default function Email({
   },
 }) {
   if (type === "monthly-report") {
+    // <Html>
+    //   <Head />
+    //   <Preview>Your Monthly Financial Report</Preview>
+    //   <Body style={styles.body}>
+    //     <Container style={styles.container}>
+    //       <Heading style={styles.title}>Monthly Financial Report</Heading>
+    //
+    //       <Text>Hello {userName},</Text>
+    //       <Text>Here&apos;s your financial summary for {data?.month}:</Text>
+    //
+    //       <Section>
+    //         <div style={styles.stat}>
+    //           <Text>Total Income</Text>
+    //           <Text>${data?.stats.totalIncome}</Text>
+    //         </div>
+    //         <div style={styles.stat}>
+    //           <Text>Total Expenses</Text>
+    //           <Text>${data?.stats.totalExpenses}</Text>
+    //         </div>
+    //       </Section>
+    //     </Container>
+    //   </Body>
+    // </Html>;
   }
   if (type === "budget-alert") {
     return (
